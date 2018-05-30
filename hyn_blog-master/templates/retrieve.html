@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Checkbox Background Signup Form Flat Responsive Widget  Template | Home:: </title>
+<!-- Custom Theme files -->
+<link href="../static/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+<!-- Custom Theme files -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="Checkbox Background Signup Form web template, Sign up Web Templates, Flat Web Templates, Login signup Responsive web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+<script src="../static/js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<!--signup page start here-->
+<h2>古月游戏论坛欢迎您</h2>
+<div class="signup" >
+        <form action="/register/" method="post" onsubmit="return false;">
+            {% csrf_token %}
+		<span class="ribben">欢迎注册</span>
+		<p>账号 : <span class="dot" id="spanName"> </span></p>
+		<input type="text" name="user" id="user">
+		<p>要修改的密码 : <span class="dot" id="spanPwd1"> </span></p>
+	 	<input type="password" name="pwd" id="pwd">
+	 	<p>确认修改密码 <span class="dot" id="spanPwd2"> </span></p>
+	 	<input type="password" name="pwd2" id="pwd2">
+        <p>验证邮箱 <span class="dot" id="spanEmail"> </span></p>
+	 	<input type="text" name="email"  id="email">
+	 	<input type="submit" value="确认!" onclick="regist()">
+        </form>
+</div>
+<div class="copyright">
+	<p>Copyright &copy; 2018</p>
+</div>
+<!--signup page end here-->
+<script>
+    function regist(){
+        var sub_user = $('#user').val();
+        var sub_pwd = $('#pwd').val();
+        var sub_email = $('#email').val();
+        var pwd2 = $('#pwd2').val();
+
+        if(pwd2==''){
+            console.log(111)
+            $("#spanPwd2").html("密码不能为空");
+            $("#spanPwd2").css({"color":"#F00"});
+            return
+        }else if(pwd2!=$("#pwd").val()){
+            $("#spanPwd2").html("两次密码不一致");
+            $("#spanPwd2").css({"color":"#F00"});
+            return
+        }else{
+        $("#spanPwd2").hide();
+        }
+
+
+        pattern = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+        var email=$("#email").val();
+        if(email==''){
+            $("#spanEmail").html("邮箱不能为空");
+            $("#spanEmail").css({"color":"#F00"});
+            return
+        }else if(!pattern.test(email)){
+            $("#spanEmail").html("邮箱格式不正确");
+            $("#spanEmail").css({"color":"#F00"});
+            return
+        }else{
+        $("#spanEmail").hide();
+        }
+
+        if(pwd==''){
+            $("#spanPwd1").html("密码不能为空");
+            $("#spanPwd1").css({"color":"#F00"});
+            return
+        }
+        else if(pwd.length<6){
+            $("#spanPwd1").html("密码不能少于6位");
+            $("#spanPwd1").css({"color":"#F00"});
+            return
+        }else if(pwd.length>15){
+             $("#spanPwd1").html("密码不能大于15位");
+             $("#spanPwd1").css({"color":"#F00"});
+             return
+        }else{
+        $("#spanPwd1").hide();
+        }
+
+        $.ajax({
+            url: '/retrieve/',
+            type: "POST",
+            data: {user: sub_user, pwd: sub_pwd, pwd2:pwd2, email:sub_email},
+            success: function (arg) {
+                if(arg.tip == "账号不存在") {
+                    $("#spanName").html("账号不存在");
+                    $("#spanName").css({"color":"red"});
+                    $("#spanName").show();
+                }
+                else if(arg.tip == "用户名为空") {
+                    $("#spanName").html("用户名为空");
+                    $("#spanName").css({"color":"red"});
+                    $("#spanName").show();
+                }
+                else if(arg.tip == "邮箱错误") {
+                    $("#spanName").html("邮箱错误");
+                    $("#spanName").css({"color":"red"});
+                    $("#spanName").show();
+                }
+                else if(arg.tip == "修改成功")
+                    window.location.href="/home";
+            },
+            error: function () {
+                alert("出现异常")
+            }
+        })
+    };
+    $("#email").blur(function(e){
+    var pattern = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/;
+    var email=$("#email").val();
+    if(email==''){
+    $("#spanEmail").html("邮箱不能为空");
+    $("#spanEmail").css({"color":"#F00"});
+    }else if(!pattern.test(email)){
+    $("#spanEmail").html("邮箱格式不正确");
+    $("#spanEmail").css({"color":"#F00"});
+    }else{
+    $("#spanEmail").hide();
+    }});
+
+
+    $("#pwd").blur(function(e){
+    var pwd=$("#pwd").val();
+    if(pwd==''){
+        $("#spanPwd1").html("密码不能为空");
+        $("#spanPwd1").css({"color":"#F00"});
+    }
+    else if(pwd.length<6){
+        $("#spanPwd1").html("密码不能少于6位");
+        $("#spanPwd1").css({"color":"#F00"});
+    }else if(pwd.length>15){
+        $("#spanPwd1").html("密码不能大于15位");
+        $("#spanPwd1").css({"color":"#F00"});
+    }else{
+    $("#spanPwd1").hide();
+    }});
+
+
+    $("#pwd2").blur(function(e){
+    var pwd2=$("#pwd2").val();
+    if(pwd2==''){
+    $("#spanPwd2").html("密码不能为空");
+    $("#spanPwd2").css({"color":"#F00"});
+    }else if(pwd2!=$("#pwd").val()){
+        $("#spanPwd2").html("两次密码不一致");
+        $("#spanPwd2").css({"color":"#F00"});
+    }else{
+    $("#spanPwd2").hide();
+    }});
+
+
+    $("#user").blur(function(e){
+    var user=$("#user").val();
+    if(user==''){
+        $("#spanName").html("账号不能为空");
+        $("#spanName").css({"color":"#F00"});
+    }else{
+        $("#spanName").hide();
+    }});
+    $.ajaxSetup({
+    　　data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+</script>
+</body>
+</html>

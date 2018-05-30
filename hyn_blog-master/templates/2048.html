@@ -1,0 +1,443 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>2048小游戏</title>
+    <link rel="stylesheet" type="text/css" href="../static/bootstrap/css/bootstrap.css">
+    <script typet="text/javascript" src="../static/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="../static/bootstrap/js/bootstrap.js"></script>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #5cf0ff;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .main {
+            width: 1000px;
+            height: 100%;
+            margin: 0 auto;
+            overflow: hidden;
+            text-align: center;
+        }
+        .main .gameName {
+            font-size: 35px;
+            font-weight: bold;
+        }
+        .main .maxScore {
+            font-size: 20px;
+        }
+        .main .maxScore span {
+            color: #ff0e16;
+            font-weight: bold;
+        }
+        .main .gameBody {
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 15px;
+            background: #4d994c;
+            border-radius: 8px;
+        }
+        .main .gameBody .row {
+            display: flex;
+            justify-content: space-between;
+        }
+        .main .gameBody .row .item {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            background: #fff;
+            text-align: center;
+            line-height: 80px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #662b35;
+            font-family: "microsoft yahei";
+        }
+        .main .gameRule {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .main .gameScore {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .main .gameScore span {
+            color: red;
+            font-size: 30px;
+        }
+        .main .scoreAndRefresh {
+            display: flex;
+            justify-content: space-around;
+            width: 280px;
+            margin: 0 auto;
+        }
+        .main .scoreAndRefresh .refreshBtn {
+            height: 30px; margin-top: 22px;
+        }
+        .modal {
+            margin-top: 10%;
+
+        }
+        .modal .modal-header h4 {
+            text-align: left;
+            font-weight: bold;
+        }
+        .modal .modal-dialog {
+            width: 300px;
+            margin: 0 auto;
+
+        }
+        .modal .modal-body {
+            font-size: 18px;
+            font-weight: bold;
+            color: red;
+        }
+        #resetMaxScore {
+            color: #fff;
+            height: 30px;
+
+        }
+    </style>
+</head>
+<body>
+<div><a href="/home" style="align-content: left; color: #f44336;font-size: 15px">返回论坛</a></div>
+<div class="container">
+    <div class="main">
+        <div class="gameName">2048小游戏</div>
+        <div class="maxScore">最高分：
+            <span id="maxScore">1345612</span>
+        </div>
+        <div class="gameBody">
+            <div class="row">
+                <div class="item emptyItem x0y0" x="0" y="0"></div>
+                <div class="item emptyItem x0y1" x="0" y="1"></div>
+                <div class="item emptyItem x0y2" x="0" y="2"></div>
+                <div class="item emptyItem x0y3" x="0" y="3"></div>
+            </div>
+            <div class="row">
+                <div class="item emptyItem x1y0" x="1" y="0"></div>
+                <div class="item emptyItem x1y1" x="1" y="1"></div>
+                <div class="item emptyItem x1y2" x="1" y="2"></div>
+                <div class="item emptyItem x1y3" x="1" y="3"></div>
+            </div>
+            <div class="row">
+                <div class="item emptyItem x2y0" x="2" y="0"></div>
+                <div class="item emptyItem x2y1" x="2" y="1"></div>
+                <div class="item emptyItem x2y2" x="2" y="2"></div>
+                <div class="item emptyItem x2y3" x="2" y="3"></div>
+            </div>
+            <div class="row">
+                <div class="item emptyItem x3y0" x="3" y="0"></div>
+                <div class="item emptyItem x3y1" x="3" y="1"></div>
+                <div class="item emptyItem x3y2" x="3" y="2"></div>
+                <div class="item emptyItem x3y3" x="3" y="3"></div>
+            </div>
+        </div>
+        <div class="gameRule">请按上、下、左、右键进行操作</div>
+        <div class="scoreAndRefresh">
+            <div class="gameScore">得分：<span id="gameScore">0</span> 分</div>
+            <button type="button" class="btn btn-danger refreshBtn">
+                <span class="glyphicon glyphicon-repeat"></span>
+            </button>
+        </div>
+        <div class="modal fade" id="gameOverModal" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                            &times;
+                        </button>
+                        <h4 class="modal-tittle" id="myModalLabel">2048小游戏</h4>
+                    </div>
+                    <div class="modal-body">
+                        Game Over!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">关闭</button>
+                        <button type="button" class="btn btn-danger refreshBtn">再玩一次</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function(){
+        //是否产生新元素
+        var isNewRndItme = false;
+        var gameScore = 0;
+        //最高分
+        var maxScore = 0;
+
+        if(localStorage.maxScore) {
+            maxScore = localStorage.maxScore - 0;
+        }else {
+            maxScore = 0;
+        }
+
+
+        //游戏初始化
+        gameInit();
+
+        //上、下、左、右监听事件
+        $('body').keydown(function(e) {
+            switch (e.keyCode) {
+                case 37:
+                    // left
+                    console.log('left');
+                    isNewRndItme = false;
+                    move('left');
+                    isGameOver();
+                    break;
+                case 38:
+                    // up
+                    console.log('up');
+                    isNewRndItme = false;
+                    move('up');
+                    isGameOver();
+                    break;
+                case 39:
+                    // right
+                    console.log('right');
+                    isNewRndItme = false;
+                    move('right');
+                    isGameOver();
+                    break;
+                case 40:
+                    // down
+                    console.log('down');
+                    isNewRndItme = false;
+                    move('down');
+                    isGameOver();
+                    break;
+            }
+        });
+
+
+        function refreshGame(){
+            var items = $('.gameBody .row .item');
+            for(var i = 0; i < items.length; i++) {
+                items.eq(i).html('').removeClass('nonEmptyItem').addClass('emptyItem');
+            }
+            gameScore = 0;
+            //分数清零
+            $('#gameScore').html(gameScore);
+            //随机生成两个新元素
+            newRndItem();
+            newRndItem();
+            //刷新颜色
+            refreshColor();
+            $('#gameOverModal').modal('hide');
+        }
+
+
+        function getSideItem(currentItem, direction) {
+            //当前元素的位置
+            var currentItemX = currentItem.attr('x') - 0;
+            var currentItemY = currentItem.attr('y') - 0;
+
+            //根据方向获取旁边元素的位置
+            switch (direction) {
+                case 'left':
+                    var sideItemX = currentItemX;
+                    var sideItemY = currentItemY - 1;
+                    break;
+                case 'right':
+                    var sideItemX = currentItemX;
+                    var sideItemY = currentItemY + 1;
+                    break;
+                case 'up':
+                    var sideItemX = currentItemX - 1;
+                    var sideItemY = currentItemY;
+                    break;
+                case 'down':
+                    var sideItemX = currentItemX + 1;
+                    var sideItemY = currentItemY;
+                    break;
+            }
+            //旁边元素
+            var sideItem = $('.gameBody .row .x' + sideItemX + 'y' + sideItemY);
+            return sideItem;
+        }
+
+
+        function itemMove(currentItem, direction) {
+
+            var sideItem = getSideItem(currentItem, direction);
+
+            if(sideItem.length == 0) {//当前元素在最边上
+                //不动
+
+            }else if(sideItem.html() == '') { //当前元素不在最后一个且左（右、上、下）侧元素是空元素
+                sideItem.html(currentItem.html()).removeClass('emptyItem').addClass('nonEmptyItem');
+                currentItem.html('').removeClass('nonEmptyItem').addClass('emptyItem');
+                itemMove(sideItem, direction);
+                isNewRndItme = true;
+
+            }else if(sideItem.html() != currentItem.html()) {//左（右、上、下）侧元素和当前元素内容不同
+                //不动
+
+            }else {//左（右、上、下）侧元素和当前元素内容相同
+                //向右合并
+                sideItem.html((sideItem.html() - 0) * 2);
+                currentItem.html('').removeClass('nonEmptyItem').addClass('emptyItem');
+                gameScore += (sideItem.text() - 0) * 10;
+                $('#gameScore').html(gameScore);
+                // itemMove(sideItem, direction);
+                maxScore = maxScore < gameScore ? gameScore : maxScore;
+                $('#maxScore').html(maxScore);
+                localStorage.maxScore = maxScore;
+                isNewRndItme = true;
+                return;
+            }
+        }
+
+
+        function move(direction){
+            //获取所有非空元素
+            var nonEmptyItems = $('.gameBody .row .nonEmptyItem');
+            //如果按下的方向是左或上，则正向遍历非空元素
+            if(direction == 'left' || direction == 'up') {
+                for(var i = 0; i < nonEmptyItems.length; i++) {
+                    var currentItem = nonEmptyItems.eq(i);
+                    itemMove(currentItem, direction);
+                }
+            }else if(direction == 'right' || direction == 'down') {//如果按下的方向是右或下，则反向遍历非空元素
+                for(var i = nonEmptyItems.length -1; i >= 0; i--) {
+                    var currentItem = nonEmptyItems.eq(i);
+                    itemMove(currentItem, direction);
+                }
+            }
+
+            //是否产生新元素
+            if(isNewRndItme) {
+                newRndItem();
+                refreshColor();
+            }
+        }
+
+
+        function isGameOver(){
+            //获取所有元素
+            var items = $('.gameBody .row .item');
+            //获取所有非空元素
+            var nonEmptyItems = $('.gameBody .row .nonEmptyItem');
+            if(items.length == nonEmptyItems.length) {//所有元素的个数 == 所有非空元素的个数  即没有空元素
+                //遍历所有非空元素
+                for(var i = 0; i < nonEmptyItems.length; i++) {
+                    var currentItem = nonEmptyItems.eq(i);
+                    if(getSideItem(currentItem, 'up').length != 0 && currentItem.html() == getSideItem(currentItem, 'up').html()) {
+                        //上边元素存在 且 当前元素中的内容等于上边元素中的内容
+                        return;
+                    }else if(getSideItem(currentItem, 'down').length != 0 && currentItem.html() == getSideItem(currentItem, 'down').html()) {
+                        //下边元素存在 且 当前元素中的内容等于下边元素中的内容
+                        return;
+                    }else if(getSideItem(currentItem, 'left').length != 0 && currentItem.html() == getSideItem(currentItem, 'left').html()) {
+                        //左边元素存在 且 当前元素中的内容等于左边元素中的内容
+                        return;
+                    }else if(getSideItem(currentItem, 'right').length != 0 && currentItem.html() == getSideItem(currentItem, 'right').html()) {
+                        //右边元素存在 且 当前元素中的内容等于右边元素中的内容
+                        return;
+                    }
+                }
+            }else {
+                return;
+            }
+            $('#gameOverModal').modal('show');
+        }
+
+
+        //游戏初始化
+        function gameInit(){
+            //初始化分数
+            $('#gameScore').html(gameScore);
+            //最大分值
+            $('#maxScore').html(maxScore);
+            //为刷新按钮绑定事件
+            $('.refreshBtn').click(refreshGame);
+            //随机生成两个新元素
+            newRndItem();
+            newRndItem();
+            //刷新颜色
+            refreshColor();
+        }
+
+        //随机生成新元素
+        function newRndItem(){
+            //随机生成新数字
+            var newRndArr = [2, 2, 4];
+            var newRndNum = newRndArr[getRandom(0, 2)];
+            console.log('newRndNum: ' + newRndNum);
+            //随机生成新数字的位置
+            var emptyItems = $('.gameBody .row .emptyItem');
+            var newRndSite = getRandom(0, emptyItems.length - 1);
+            emptyItems.eq(newRndSite).html(newRndNum).removeClass('emptyItem').addClass('nonEmptyItem');
+        }
+
+        //产生随机数，包括min、max
+        function getRandom(min, max){
+          return min + Math.floor(Math.random() * (max - min + 1));
+        }
+
+        //刷新颜色
+        function refreshColor(){
+            var items = $('.gameBody .item');
+            for(var i = 0; i < items.length; i++) {
+                // console.log(items.eq(i).parent().index());
+                switch (items.eq(i).html()) {
+                    case '':
+                        items.eq(i).css('background', '');
+                        break;
+                    case '2':
+                        items.eq(i).css('background', 'rgb(250, 225, 188)');
+                        break;
+                    case '4':
+                        items.eq(i).css('background', 'rgb(202, 240, 240)');
+                        break;
+                    case '8':
+                        items.eq(i).css('background', 'rgb(117, 231, 193)');
+                        break;
+                    case '16':
+                        items.eq(i).css('background', 'rgb(240, 132, 132)');
+                        break;
+                    case '32':
+                        items.eq(i).css('background', 'rgb(181, 240, 181)');
+                        break;
+                    case '64':
+                        items.eq(i).css('background', 'rgb(182, 210, 246)');
+                        break;
+                    case '128':
+                        items.eq(i).css('background', 'rgb(255, 207, 126)');
+                        break;
+                    case '256':
+                        items.eq(i).css('background', 'rgb(250, 216, 216)');
+                        break;
+                    case '512':
+                        items.eq(i).css('background', 'rgb(124, 183, 231)');
+                        break;
+                    case '1024':
+                        items.eq(i).css('background', 'rgb(225, 219, 215)');
+                        break;
+                    case '2048':
+                        items.eq(i).css('background', 'rgb(221, 160, 221)');
+                        break;
+                    case '4096':
+                        items.eq(i).css('background', 'rgb(250, 139, 176)');
+                        break;
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>

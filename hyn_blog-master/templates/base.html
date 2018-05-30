@@ -1,0 +1,139 @@
+{% load static %}
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} 古月游戏论坛 {% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/pure-min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/grids-responsive-min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/blog.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome.min.css'%}"/>
+</head>
+<body>
+<div id="layout" class="pure-g">
+    <!--左侧边栏 开始-->
+    <div class="sidebar pure-u-1 pure-u-md-1-4">
+        <div class="header" style="margin-top: 200px">
+            <h1 class="brand-title"><a href="{% url 'home' %}" style="text-decoration: none;">古月游戏论坛</a></h1>
+            <br>
+            <h2 class="brand-tagline">爱游戏，爱分享</h2>
+            <br>
+            <h5>欢迎您的光临,
+                {% if name != None %}
+                    {{ name }} <a href="/user_Post">我的主题</a></h5>
+                {% else %}
+                     游客</h5>
+                {% endif %}
+            <br>
+            <div style="display:inline;"><a>一起聊聊</a>&nbsp;</div>
+            <div style="display:inline;"><a href="/imglook">壁纸欣赏</a>&nbsp;</div>
+            <div style="display:inline;"><a href="/2048">玩玩游戏</a>&nbsp;</div>
+            <div style="display:inline;"><a href="/publish">发表主题</a>&nbsp;</div>
+            <br>
+            <div><input type="text" id="search_title" style="color: #0f0f0f"><button style="color: #0f0f0f" id="btsearch">搜索主题</button></div>
+
+            <br>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        {% for category in category_list %}
+                            <a class="pure-button" href="{% url 'category_menu' id=category.id %}"
+                               style="text-decoration: none">{{ category }}</a>
+                        {% endfor %}&nbsp;
+                    </li>
+                </ul>
+                <br>
+                <br>
+                <h3 class="brand-tagline" style="margin: 2%">标签</h3>
+                <ul class="nav-list" style="margin: 2%">
+                    {% for m in months %}
+                        <li>
+                            <a href="{% url 'archives' year=m.year month=m.month %}"
+                               style="text-decoration: none">{{ m | date:'Y年m月' }}</a>
+                        </li>
+                    {% empty %}
+                        暂无标签！
+                    {% endfor %}
+                </ul>
+                <br>
+                <br>
+                <br>
+                <ul class="nav-list">
+                <li>
+                    <a href="#" style="text-decoration: none">
+                        <i class="fa fa-weixin" style="font-size: 30px" aria-hidden="true" title="微信"></i>
+                    </a>
+                    &nbsp;
+                    <a href=mailto:934701945@qq.com style="text-decoration: none">
+                        <i class="fa fa-envelope-o" style="font-size: 30px" aria-hidden="true" title="邮箱"></i>
+                    </a>
+                    &nbsp;
+                    <a href="https://github.com/hyn3118166" style="text-decoration: none" title="Github"
+                       target="_blank">
+                        <i class="fa fa-github" style="font-size: 34px" aria-hidden="true"></i>
+                    </a>
+{#                    {% if leg == 1 %}#}
+{#                        <a href="/bye" name="Cancellation">退出登陆</a>#}
+{#                    {% else %}#}
+{#                        <a href="/login" name="longin">登录</a>#}
+{#                    {% endif %}#}
+                    <div style="align-content: right">
+                    {% if name != None %}
+                        <a href="/bye" name="Cancellation">退出登陆</a>
+                    {% else %}
+                        <a href="/login" name="longin">登录</a>
+                        <a href="/register" name="longin">注册</a>
+                    {% endif %}
+                    </div>
+                </li>
+            </ul>
+            </nav>
+        </div>
+    </div>
+    <!--左侧边栏 结束-->
+    <!--文章列表 开始-->
+    <div class="content pure-u-1 pure-u-md-3-4">
+        <div>
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    <!--文章列表 结束-->
+</div>
+<div class="go-top">
+    <div class="arrow"></div>
+    <div class="stick"></div>
+</div>
+<script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script>
+    $(function () {
+        $(window).scroll(function () {
+            if ($(window).scrollTop() > 1000)
+                $('div.go-top').show();
+            else
+                $('div.go-top').hide();
+        });
+        $('div.go-top').click(function () {
+            $('html, body').animate({scrollTop: 0}, 500);
+        });
+    });
+    $("#btsearch").click(function () {
+        var serch_title = $("#search_title").val()
+        $.ajax({
+            url: '/search_title/',
+            type: "POST",
+            data: {title: serch_title},
+            success: function (arg) {
+                if(arg.tip == "跳至查询页")
+                    window.location.href="/search_title?title="+serch_title;
+                else
+                    alert("发生错误")
+            },
+            })
+    });
+    $.ajaxSetup({
+　　data: {csrfmiddlewaretoken: '{{ csrf_token }}' },
+    });
+</script>
+</body>
+</html>

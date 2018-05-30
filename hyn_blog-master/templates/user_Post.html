@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+    <div class="posts">
+        {% for post in post_list %}
+            <div class="post-container">
+                <section class="post">
+                    <header class="post-header">
+                        <h2 class="post-title"><a href="{% url 'detail' id=post.id %}"
+                                                  style="text-decoration: none">{{ post.title }}</a></h2>
+                        <p class="post-meta" style="display: inline">
+                            <i class="fa fa-calendar" aria-hidden="true"></i>&nbsp;{{ post.pub_time |date:'Y-m-d' }}&nbsp;&nbsp;
+                            <i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{{ post.views }}次浏览&nbsp;&nbsp;
+                            <i class="fa fa-list-alt"></i>&nbsp;{{ post.category }}&nbsp;&nbsp;
+
+                        </p>
+                            &nbsp;&nbsp;&nbsp;
+                            <a class="button" href="{% url 'detail' id=post.id %}"
+                               style="text-decoration: none">阅读全文</a>&nbsp;
+                            <a class="button" href="/user_Post?id={{ post.id}}&action=modify"
+                               style="text-decoration: none">修改主题</a>&nbsp;
+                            <a class="button" href="/user_Post?id={{ post.id}}&action=delete"
+                               style="text-decoration: none">删除主题</a>&nbsp;
+                    </header>
+
+{#                    <div class="post-description">#}
+{#                        <p>#}
+                            {#striptags用于过滤正文中所有的HTML标签#}
+                            {#truncatechars用于截取正文前300个字符#}
+{#                            {{ post.content|striptags|truncatechars:300 }}#}
+{#                        </p>#}
+{#                    </div>#}
+                </section>
+            </div>
+            {% empty %}
+            <h1>您还没有发表过文章</h1>
+        {% endfor %}
+    </div><!-- /.blog-post -->
+{% endblock %}

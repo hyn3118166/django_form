@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+    <div id="">您已成功注销<div id="jishi" style="color: red;">3<span>秒后返回主页 </span></div></div>
+		<script type="text/javascript">
+			var shijian = document.getElementById("jishi")
+			var tingzhi = setInterval(gaibian,500);
+			function gaibian(){
+				shijian.innerText=parseInt(shijian.innerText)-1;
+				if (shijian.innerText==0) {
+				    window.location.href = "/home";
+					clearInterval(tingzhi)
+				}
+			}
+		</script>
+	</body>
+</html>
+
+</body>
+</html>
